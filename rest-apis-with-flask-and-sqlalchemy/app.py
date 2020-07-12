@@ -104,7 +104,6 @@ def bookFunctionId(id):
         title = request.args.get('title', '')
         author = request.args.get('author', '')
         genre = request.args.get('genre', '')
-        print(id, title, author, genre)
         return updateBook(id, title, author, genre)
 
     elif request.method == 'DELETE':
