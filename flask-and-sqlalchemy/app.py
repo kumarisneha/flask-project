@@ -28,11 +28,15 @@ def showBooks():
 @app.route('/books/new/', methods=['GET', 'POST'])
 def newBook():
     if request.method == 'POST':
-        newBook = Book(title=request.form['name'],
-                       author=request.form['author'],
-                       genre=request.form['genre'])
+        title = request.form['name']
+        author=request.form['author']
+        genre=request.form['genre']
+        newBook = Book(title=title,
+                       author=author,
+                       genre=genre)
         session.add(newBook)
         session.commit()
+        print(title, author, genre)
         return redirect(url_for('showBooks'))
     else:
         return render_template('newBook.html')
@@ -60,3 +64,8 @@ def deleteBook(book_id):
         return redirect(url_for('showBooks', book_id=book_id))
     else:
         return render_template('deleteBook.html', book=bookToDelete)
+
+
+if __name__ == '__main__':
+    app.debug = True
+    app.run(host='127.0.0.1', port=5000)
