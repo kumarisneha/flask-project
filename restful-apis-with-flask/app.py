@@ -16,8 +16,6 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-
-
 """
 api functions
 """
@@ -67,25 +65,11 @@ def deleteABook(id):
     return jsonify({"message":'Removed Book with id %s' % id})
 
 
-# @app.route('/')
-# @app.route('/booksApi', methods=['GET', 'POST'])
-# def booksFunction():
-#     if request.method == 'GET':
-#         return get_books()
-#     elif request.method == 'POST':
-#         print("Inside post====", dir(request))
-#         title = request.args.get('title', '')
-#         author = request.args.get('author', '')
-#         genre = request.args.get('genre', '')
-#         print(title, author, genre)
-#         return makeANewBook(title, author, genre)
-
-@app.route('/')
-@app.route('/booksApi', methods=['GET', 'POST'])
-def booksFunction():
-    if request.method == 'GET':
+class Books(Resource):
+    def get(self):
         return get_books()
-    elif request.method == 'POST':
+
+    def post(self):
         data = json.loads(request.data)
         print("data--------", data)
         title = data.get("title",None)
@@ -99,21 +83,22 @@ def booksFunction():
             session.commit()
             return jsonify(Book=addedbook.serialize)
 
-@app.route('/booksApi/<int:id>', methods=['GET', 'PUT', 'DELETE'])
-def bookFunctionId(id):
-    if request.method == 'GET':
+class BookId(Resource):
+    def get(self, id):
         return get_book(id)
 
-    elif request.method == 'PUT':
+    def put(self, id):
         title = request.args.get('title', '')
         author = request.args.get('author', '')
         genre = request.args.get('genre', '')
         print(id, title, author, genre)
         return updateBook(id, title, author, genre)
 
-    elif request.method == 'DELETE':
+    def delete(self, id):
         return deleteABook(id)
 
+api.add_resource(Books, '/booksApi', '/')
+api.add_resource(BookId, '/booksApi/<int:id>')
 
 if __name__ == '__main__':
     app.debug = True
